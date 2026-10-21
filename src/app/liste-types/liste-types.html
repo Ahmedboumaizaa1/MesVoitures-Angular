@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <h2>Gestion des types de voitures</h2>
+
+  <app-update-type
+    [typeVoiture]="updatedType"
+    [ajout]="ajout"
+    (typeUpdated)="typeUpdated($event)"
+  />
+  @if (!ajout) {
+    <button type="button" class="btn btn-outline-secondary mb-4" (click)="nouveauType()">
+      Nouveau type
+    </button>
+  }
+
+  @if (message) {
+    <p class="alert alert-danger">{{ message }}</p>
+  }
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom du type</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (type of types; track type.idType ?? type.idtype) {
+        <tr>
+          <td>{{ type.idType ?? type.idtype }}</td>
+          <td>{{ type.nomType ?? type.nomtype }}</td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm" (click)="updateType(type)">
+              Éditer
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

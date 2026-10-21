@@ -1,0 +1,40 @@
+<div class="container">
+    <div>
+        <h2>Ajouter un Voiture :</h2>
+    </div>
+    <form>
+        <div class="col-sm-2 col-md-2 col-lg-2" hidden>
+            <label  >ID Voiture</label>
+            <input type="text" [(ngModel)]="newVoiture.idVoiture" name="idVoiture" class="form-control">
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <label>Nom Voiture</label>
+            <input type="text" [(ngModel)]="newVoiture.nomVoiture" name="nomVoiture" class="form-control">
+        </div>
+        <div class="col-sm-2 col-md-2 col-lg-2">
+            <label>Prix Voiture</label>
+            <input type="number" [(ngModel)]="newVoiture.prixVoiture" name="prixVoiture" class="form-control">
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <label>Date création</label>
+            <input type="date" [(ngModel)]="newVoiture.dateCreation" name="dateCreation" class="form-control">
+        </div>
+
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <label for="idtype">Type</label>
+            <select class="form-control form-control-lg" name="idtype" id="idtype" [(ngModel)]="newtype.idType">
+                @for(type of types; track type.idType ?? type.idtype){
+                    <option [ngValue]="type.idType ?? type.idtype">{{ type.nomType ?? type.nomtype }}</option>
+                }
+            </select>
+        </div>
+
+            
+        <div class="mt-2">
+            <button type="submit" (click)="ajouterVoiture()" class="btn btn-success">Ajouter</button>
+                <div>
+                    <h3> {{ message }} </h3>
+                </div>
+        </div>
+    </form>
+</div>

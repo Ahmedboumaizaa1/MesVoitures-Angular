@@ -1,0 +1,55 @@
+<div class="container mt-4">
+  <h2>Recherche par nom</h2>
+
+  <div class="mb-3">
+    <label for="nomVoiture" class="form-label">Nom de la voiture</label>
+    <div class="input-group">
+      <input
+        id="nomVoiture"
+        name="nomVoiture"
+        type="search"
+        class="form-control"
+        placeholder="Rechercher en tapant..."
+        [(ngModel)]="nomVoiture"
+        (keyup)="onKeyUp(nomVoiture)"
+      >
+      <button type="button" class="btn btn-primary" (click)="rechercherVoitures()">
+        Rechercher via l'API
+      </button>
+    </div>
+    <small class="form-text text-muted">
+      La liste se filtre pendant la saisie ; le bouton lance aussi la recherche côté API.
+    </small>
+  </div>
+
+  @if (message) {
+    <p class="alert alert-danger">{{ message }}</p>
+  }
+
+  @if ((voitures | searchFilter: searchTerm).length > 0) {
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Prix</th>
+          <th>Date de création</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (voiture of voitures | searchFilter: searchTerm; track voiture.idVoiture) {
+          <tr>
+            <td>{{ voiture.idVoiture }}</td>
+            <td>{{ voiture.nomVoiture }}</td>
+            <td>{{ voiture.prixVoiture }}</td>
+            <td>{{ voiture.dateCreation | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ voiture.type?.nomType ?? voiture.type?.nomtype ?? 'PAS DE TYPE' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else if (!message) {
+    <p>Aucune voiture trouvée.</p>
+  }
+</div>

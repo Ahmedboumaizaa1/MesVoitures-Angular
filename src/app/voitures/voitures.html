@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            @if (voitures.length > 0) {
+            <h1>Nombre de voitures : {{ voitures.length }}</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">N°</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Date de création</th>
+                        <th scope="col">Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (voiture of voitures; track voiture.idVoiture; let index = $index) {
+                        <tr>
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ voiture.idVoiture }}</td>
+                            <td>{{ voiture.nomVoiture }}</td>
+                            <td>{{ voiture.prixVoiture }}</td>
+                            <td>{{ voiture.dateCreation | date: 'dd/MM/yyyy' }}</td>
+                            <td>{{ voiture.type?.nomType ?? voiture.type?.nomtype }}</td>
+                            <td><a class="btn btn-danger" (click)="supprimerVoiture(voiture)">Supprimer</a></td>
+                            <td><a class="btn btn-success" [routerLink]="['/update-voiture', voiture.idVoiture]">Modifier</a></td>
+                        </tr>
+                    }   
+                </tbody>
+                
+            </table>
+            }
+    </div>
+</div>

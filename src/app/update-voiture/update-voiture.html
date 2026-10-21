@@ -1,0 +1,36 @@
+<div class="container">
+    <h2>Modifier une voiture</h2>
+
+    @if (currentVoiture.idVoiture !== undefined) {
+    <form (ngSubmit)="updateVoiture()">
+        <div  class="mb-3">
+            <label for="idVoiture" class="form-label">ID Voiture</label>
+            <input readonly id="idVoiture" type="number" [ngModel]="currentVoiture.idVoiture" name="idVoiture" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="nomVoiture" class="form-label">Nom Voiture</label>
+            <input id="nomVoiture" type="text" [(ngModel)]="currentVoiture.nomVoiture" name="nomVoiture" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="prixVoiture" class="form-label">Prix Voiture</label>
+            <input id="prixVoiture" type="number" [(ngModel)]="currentVoiture.prixVoiture" name="prixVoiture" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="dateCreation" class="form-label">Date création</label>
+            <input id="dateCreation" type="date" [(ngModel)]="dateCreation" name="dateCreation" class="form-control" required>
+        </div>
+
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <label>Type</label>
+            <select class="form-control form-control-lg" name="idtype" id="idtype" [(ngModel)]="updatetypeid">
+                @for(type of types; track type.idtype ?? type.idType){
+                    <option [ngValue]="type.idtype ?? type.idType">{{ type.nomtype ?? type.nomType }}</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Enregistrer</button>
+    </form>
+    } @else {
+    <p>{{ message }}</p>
+    }
+</div>

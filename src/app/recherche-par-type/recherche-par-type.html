@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h2>Recherche par type</h2>
+
+  <div class="mb-3">
+    <label for="typeVoiture" class="form-label">Types</label>
+    <select
+      id="typeVoiture"
+      name="typeVoiture"
+      class="form-select"
+      [(ngModel)]="idType"
+      (change)="onChange()"
+    >
+      <option [ngValue]="null">Tous les types</option>
+      @for (type of types; track type.idType ?? type.idtype) {
+        <option [ngValue]="type.idType ?? type.idtype">
+          {{ type.nomType ?? type.nomtype }}
+        </option>
+      }
+    </select>
+  </div>
+
+  @if (message) {
+    <p class="alert alert-danger">{{ message }}</p>
+  }
+
+  @if (voitures.length > 0) {
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom</th>
+          <th>Prix</th>
+          <th>Date de création</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (voiture of voitures; track voiture.idVoiture) {
+          <tr>
+            <td>{{ voiture.idVoiture }}</td>
+            <td>{{ voiture.nomVoiture }}</td>
+            <td>{{ voiture.prixVoiture }}</td>
+            <td>{{ voiture.dateCreation | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ voiture.type?.nomType ?? voiture.type?.nomtype ?? 'PAS DE TYPE' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else if (!message) {
+    <p>Aucune voiture trouvée.</p>
+  }
+</div>

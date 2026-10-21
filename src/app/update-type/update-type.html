@@ -1,0 +1,33 @@
+<form class="card card-body mb-4" (ngSubmit)="saveType()">
+  <h3>{{ ajout ? 'Ajouter un type' : 'Modifier un type' }}</h3>
+
+  @if (!ajout) {
+    <div class="mb-3">
+      <label for="idType" class="form-label">ID Type</label>
+      <input
+        id="idType"
+        name="idType"
+        type="number"
+        class="form-control"
+        [ngModel]="typeVoiture.idType ?? typeVoiture.idtype"
+        readonly
+      >
+    </div>
+  }
+
+  <div class="mb-3">
+    <label for="nomType" class="form-label">Nom du type</label>
+    <input
+      id="nomType"
+      name="nomType"
+      type="text"
+      class="form-control"
+      [(ngModel)]="nomType"
+      required
+    >
+  </div>
+
+  <button type="submit" class="btn btn-success align-self-start">
+    {{ ajout ? 'Ajouter' : 'Modifier' }}
+  </button>
+</form>
