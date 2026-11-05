@@ -22,7 +22,7 @@ export class UpdateType implements OnChanges {
   }
 
   saveType(): void {
-    this.typeVoiture.nomtype = this.nomType.trim();
+    this.typeVoiture.nomType = this.nomType.trim();
     this.typeUpdated.emit(this.typeVoiture);
   }
 }

@@ -9,17 +9,11 @@
         name="nomVoiture"
         type="search"
         class="form-control"
-        placeholder="Rechercher en tapant..."
+        placeholder="Saisir le nom d'une voiture"
         [(ngModel)]="nomVoiture"
-        (keyup)="onKeyUp(nomVoiture)"
+        (ngModelChange)="onSearchChange($event)"
       >
-      <button type="button" class="btn btn-primary" (click)="rechercherVoitures()">
-        Rechercher via l'API
-      </button>
     </div>
-    <small class="form-text text-muted">
-      La liste se filtre pendant la saisie ; le bouton lance aussi la recherche côté API.
-    </small>
   </div>
 
   @if (message) {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Voiture } from '../model/voiture.model';
 import { type } from '../model/type.model';
@@ -13,42 +13,58 @@ import { VoitureService } from '../services/voiture.service';
 })
 export class RechercheParType implements OnInit {
   voitures: Voiture[] = [];
+  toutesLesVoitures: Voiture[] = [];
   types: type[] = [];
   idType: number | null = null;
-  message = '';
+  messageTypes = '';
+  messageVoitures = '';
 
-  constructor(private voitureService: VoitureService) {}
+  constructor(
+    private voitureService: VoitureService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.voitureService.listerTypes().subscribe({
       next: response => {
         this.types = response._embedded.types;
+        this.messageTypes = '';
+        this.changeDetectorRef.markForCheck();
       },
       error: () => {
-        this.message = 'Impossible de charger les types.';
+        this.messageTypes = 'Impossible de charger les types.';
+        this.changeDetectorRef.markForCheck();
       },
     });
 
     this.chargerVoitures();
   }
 
-  onChange(): void {
-    this.chargerVoitures();
+  onChange(idType: number | null): void {
+    this.idType = idType;
+    this.filtrerVoitures();
   }
 
   private chargerVoitures(): void {
-    const request = this.idType === null
-      ? this.voitureService.listeVoitures()
-      : this.voitureService.rechercherParType(this.idType);
-
-    request.subscribe({
+    this.voitureService.listeVoitures().subscribe({
       next: voitures => {
-        this.voitures = voitures;
-        this.message = '';
+        this.toutesLesVoitures = voitures;
+        this.filtrerVoitures();
+        this.messageVoitures = '';
+        this.changeDetectorRef.markForCheck();
       },
       error: () => {
-        this.message = 'Impossible de charger les voitures.';
+        this.messageVoitures = 'Impossible de charger les voitures.';
+        this.changeDetectorRef.markForCheck();
       },
     });
+  }
+
+  private filtrerVoitures(): void {
+    this.voitures = this.idType === null
+      ? this.toutesLesVoitures
+      : this.toutesLesVoitures.filter(voiture =>
+          Number(voiture.type?.idType ?? voiture.type?.idtype) === this.idType
+        );
   }
 }

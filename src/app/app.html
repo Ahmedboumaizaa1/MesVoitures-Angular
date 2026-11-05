@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 <div class="container-fluid">
-<a class="navbar-brand" href="#">Gestion des Voitures</a>
+<a class="navbar-brand" routerLink="/voitures">Gestion des Voitures</a>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
 aria-expanded="false" aria-label="Toggle navigation">
@@ -11,36 +11,37 @@ aria-expanded="false" aria-label="Toggle navigation">
 <li class="nav-item">
 <a class="nav-link active" aria-current="page" routerLink="/voitures" >Home</a>
 </li>
-<li class="nav-item">
-<a class="nav-link" routerLink="/rechercheParType">Recherche par type</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" routerLink="/rechercheParNom">Recherche par nom</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" routerLink="/listeTypes">Gestion des types</a>
-</li>
 <li class="nav-item dropdown">
 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
 role="button" data-bs-toggle="dropdown" aria-expanded="false">
 Voitures 
 </a>
 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+@if (authService.isAdmin()) {
 <li><a class="dropdown-item" routerLink="/add-voiture">Ajouter</a></li>
+}
 <li><a class="dropdown-item" routerLink="/voitures">Lister</a></li>
+<li><hr class="dropdown-divider"></li>
+<li><a class="dropdown-item" routerLink="/rechercheParType">Recherche par type</a></li>
+<li><a class="dropdown-item" routerLink="/rechercheParNom">Recherche par nom</a></li>
+@if (authService.isAdmin()) {
+<li><a class="dropdown-item" routerLink="/listeTypes">Gestion des types</a></li>
+}
 </ul>
 </li>
 </ul>
 <ul class="navbar-nav ms-auto m-2" >
 <li class="nav-item dropdown">
-<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+<a class="nav-link dropdown-toggle" href="#" id="userDropdown"
 role="button" data-bs-toggle="dropdown" aria-expanded="false">
-[username]
+{{ authService.loggedUser ?? 'Compte' }}
 </a>
-<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-<li><a class="dropdown-item" href="#">Login</a></li>
-<li><a class="dropdown-item" href="#">Logout</a></li>
-<li><a class="dropdown-item" href="#">Profile</a></li>
+<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+@if (authService.isloggedIn) {
+<li><button type="button" class="dropdown-item" (click)="onLogout()">Logout</button></li>
+} @else {
+<li><a class="dropdown-item" routerLink="/login">Login</a></li>
+}
 </ul>
 </li>
 </ul>

@@ -2,13 +2,21 @@ import { Injectable } from '@angular/core';
 import { Voiture } from '../model/voiture.model';
 import { type } from '../model/type.model';
 import { TypeWrapper } from '../model/type-wrapper.model';
-import { Observable, throwError } from 'rxjs';
+import { Observable, map, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
+
+type TypeApiResponse = type[] | {
+  _embedded?: { types?: type[] };
+  value?: type[];
+  Count?: number;
+};
+
+type VoitureApiResponse = Voiture[] | { value?: Voiture[] };
 
 @Injectable({
   providedIn: 'root',
@@ -54,16 +62,24 @@ export class VoitureService {
 
 
   listeVoitures(): Observable<Voiture[]> {
-    return this.http.get<Voiture[]>(environment.apiURL);
+    return this.http.get<VoitureApiResponse>(environment.apiURL).pipe(
+      map(response => this.normaliserVoitures(response))
+    );
   }
 
   rechercherParType(idType: number): Observable<Voiture[]> {
-    return this.http.get<Voiture[]>(`${environment.apiURL}/voituresByType/${idType}`);
+    return this.listeVoitures().pipe(
+      map(voitures => voitures.filter(voiture =>
+        (voiture.type?.idType ?? voiture.type?.idtype) === idType
+      ))
+    );
   }
 
   rechercherParNom(nom: string): Observable<Voiture[]> {
     const encodedName = encodeURIComponent(nom);
-    return this.http.get<Voiture[]>(`${environment.apiURL}/voituresByName/${encodedName}`);
+    return this.http.get<VoitureApiResponse>(`${environment.apiURL}/voituresByName/${encodedName}`).pipe(
+      map(response => this.normaliserVoitures(response))
+    );
   }
 
   ajouterVoiture(voiture: Voiture): Observable<Voiture> {
@@ -88,11 +104,34 @@ export class VoitureService {
 
 
   listerTypes(): Observable<TypeWrapper> {
-    return this.http.get<TypeWrapper>(environment.apiURLType);
+    return this.http.get<TypeApiResponse>(environment.apiURLType).pipe(
+      map(response => {
+        const types = Array.isArray(response)
+          ? response
+          : response._embedded?.types ?? response.value;
+        if (!Array.isArray(types)) {
+          throw new Error('Format de réponse des types invalide.');
+        }
+        return { _embedded: { types } };
+      })
+    );
+  }
+
+  private normaliserVoitures(response: VoitureApiResponse): Voiture[] {
+    if (Array.isArray(response)) {
+      return response;
+    }
+    if (Array.isArray(response.value)) {
+      return response.value;
+    }
+    throw new Error('Format de réponse des voitures invalide.');
   }
 
   ajouterType(typeVoiture: type): Observable<type> {
-    return this.http.post<type>(environment.apiURLType, typeVoiture, httpOptions);
+    const typePayload = {
+      nomType: (typeVoiture.nomType ?? typeVoiture.nomtype)?.trim()
+    };
+    return this.http.post<type>(environment.apiURLType, typePayload, httpOptions);
   }
 
   modifierType(typeVoiture: type): Observable<type> {
@@ -100,7 +139,11 @@ export class VoitureService {
     if (id === undefined) {
       return throwError(() => new Error('Identifiant de type manquant.'));
     }
-    return this.http.put<type>(`${environment.apiURLType}/${id}`, typeVoiture, httpOptions);
+    const typePayload = {
+      idType: id,
+      nomType: (typeVoiture.nomType ?? typeVoiture.nomtype)?.trim()
+    };
+    return this.http.put<type>(`${environment.apiURLType}/${id}`, typePayload, httpOptions);
   }
 
   consulterType(id : number): type[] {

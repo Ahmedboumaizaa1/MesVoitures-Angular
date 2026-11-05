@@ -8,7 +8,7 @@
       name="typeVoiture"
       class="form-select"
       [(ngModel)]="idType"
-      (change)="onChange()"
+      (ngModelChange)="onChange($event)"
     >
       <option [ngValue]="null">Tous les types</option>
       @for (type of types; track type.idType ?? type.idtype) {
@@ -19,8 +19,11 @@
     </select>
   </div>
 
-  @if (message) {
-    <p class="alert alert-danger">{{ message }}</p>
+  @if (messageTypes) {
+    <p class="alert alert-danger">{{ messageTypes }}</p>
+  }
+  @if (messageVoitures) {
+    <p class="alert alert-danger">{{ messageVoitures }}</p>
   }
 
   @if (voitures.length > 0) {
@@ -46,7 +49,7 @@
         }
       </tbody>
     </table>
-  } @else if (!message) {
+  } @else if (!messageVoitures) {
     <p>Aucune voiture trouvée.</p>
   }
 </div>

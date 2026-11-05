@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Voiture } from '../model/voiture.model';
 import { VoitureService } from '../services/voiture.service';
@@ -15,52 +15,31 @@ export class RechercheParNom implements OnInit {
   nomVoiture = '';
   searchTerm = '';
   voitures: Voiture[] = [];
-  allVoitures: Voiture[] = [];
   message = '';
 
-  constructor(private voitureService: VoitureService) {}
+  constructor(
+    private voitureService: VoitureService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.chargerVoitures();
   }
 
-  rechercherVoitures(): void {
-    const nom = this.nomVoiture.trim();
-
-    if (!nom) {
-      this.chargerVoitures();
-      return;
-    }
-
-    this.voitureService.rechercherParNom(nom).subscribe({
-      next: voitures => {
-        this.voitures = voitures;
-        this.searchTerm = nom;
-        this.message = '';
-      },
-      error: () => {
-        this.message = 'La recherche par nom a échoué.';
-      },
-    });
-  }
-
-  onKeyUp(filterText: string): void {
+  onSearchChange(filterText: string): void {
     this.searchTerm = filterText;
-    const normalizedFilter = filterText.trim().toLocaleLowerCase();
-    this.voitures = this.allVoitures.filter(voiture =>
-      (voiture.nomVoiture ?? '').toLocaleLowerCase().includes(normalizedFilter),
-    );
   }
 
   private chargerVoitures(): void {
     this.voitureService.listeVoitures().subscribe({
       next: voitures => {
-        this.allVoitures = voitures;
         this.voitures = voitures;
         this.message = '';
+        this.changeDetectorRef.markForCheck();
       },
       error: () => {
         this.message = 'Impossible de charger les voitures.';
+        this.changeDetectorRef.markForCheck();
       },
     });
   }

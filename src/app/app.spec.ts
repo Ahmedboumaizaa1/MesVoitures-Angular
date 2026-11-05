@@ -1,10 +1,26 @@
+import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { App } from './app';
+import { AuthService } from './services/auth.service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        {
+          provide: AuthService,
+          useValue: {
+            loggedUser: 'admin',
+            isloggedIn: true,
+            isAdmin: () => true,
+            logout: () => undefined,
+          },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -14,10 +30,10 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render the application navigation', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, MesVoitures');
+    expect(compiled.querySelector('.navbar-brand')?.textContent).toContain('Gestion des Voitures');
   });
 });

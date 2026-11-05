@@ -1,8 +1,13 @@
 <div class="container">
     <div class="card shadow mb-4">
         <div class="card-body">
+            <h2>Liste des voitures</h2>
+            @if (message) {
+                <p class="alert alert-danger">{{ message }}</p>
+            }
+
             @if (voitures.length > 0) {
-            <h1>Nombre de voitures : {{ voitures.length }}</h1>
+            <h3>Nombre de voitures : {{ voitures.length }}</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -23,8 +28,10 @@
                             <td>{{ voiture.prixVoiture }}</td>
                             <td>{{ voiture.dateCreation | date: 'dd/MM/yyyy' }}</td>
                             <td>{{ voiture.type?.nomType ?? voiture.type?.nomtype }}</td>
-                            <td><a class="btn btn-danger" (click)="supprimerVoiture(voiture)">Supprimer</a></td>
-                            <td><a class="btn btn-success" [routerLink]="['/update-voiture', voiture.idVoiture]">Modifier</a></td>
+                            @if (authService.isAdmin()) {
+                                <td><button type="button" class="btn btn-danger" (click)="supprimerVoiture(voiture)">Supprimer</button></td>
+                                <td><a class="btn btn-success" [routerLink]="['/update-voiture', voiture.idVoiture]">Modifier</a></td>
+                            }
                         </tr>
                     }   
                 </tbody>

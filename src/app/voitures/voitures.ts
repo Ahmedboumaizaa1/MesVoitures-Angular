@@ -5,8 +5,8 @@ import { VoitureService } from '../services/voiture.service';
 import { RouterModule, RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { type } from '../model/type.model';
 import { TypeWrapper } from '../model/type-wrapper.model';
+import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-voitures',
   standalone: true,
@@ -16,6 +16,7 @@ import { TypeWrapper } from '../model/type-wrapper.model';
 export class Voitures implements OnInit {
 
   private voituresListe: Voiture[] = [];
+  message = '';
 
   get voitures(): Voiture[] {
     return this.voituresListe;
@@ -29,7 +30,8 @@ export class Voitures implements OnInit {
   constructor(
     private voitureService: VoitureService,
     private changeDetectorRef: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    public authService: AuthService
   ) {
   }
 
@@ -38,9 +40,15 @@ export class Voitures implements OnInit {
   }
 
   chargerVoitures() {
-    this.voitureService.listeVoitures().subscribe(voitures => { 
-      console.log(voitures);
-      this.voitures = voitures;
+    this.voitureService.listeVoitures().subscribe({
+      next: voitures => {
+        this.voitures = voitures;
+        this.message = '';
+      },
+      error: () => {
+        this.message = 'Impossible de charger les voitures.';
+        this.changeDetectorRef.markForCheck();
+      }
     });
   }
 
@@ -59,7 +67,7 @@ export class Voitures implements OnInit {
   }
 
   AjouterVoiture(voiture: Voiture): void {
-    this.voitures.push(voiture);
+    this.voitures = [...this.voitures, voiture];
   }
 
   listerTypes(): Observable<TypeWrapper> {
